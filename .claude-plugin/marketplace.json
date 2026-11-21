@@ -1,0 +1,14 @@
+{
+  "name": "repo-lessons",
+  "owner": {
+    "name": "rentin0"
+  },
+  "plugins": [
+    {
+      "name": "repo-lessons",
+      "source": "./plugins/repo-lessons",
+      "description": "Recall relevant repository lessons when you submit a prompt."
+    }
+  ],
+  "description": "Git-backed lessons for coding agents."
+}
