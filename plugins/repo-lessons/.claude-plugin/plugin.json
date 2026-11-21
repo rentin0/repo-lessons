@@ -1,0 +1,10 @@
+{
+  "name": "repo-lessons",
+  "version": "0.0.1",
+  "description": "Search repository-owned lessons before each prompt.",
+  "author": {
+    "name": "rentin0"
+  },
+  "repository": "https://github.com/rentin0/repo-lessons",
+  "license": "MIT"
+}
