@@ -42,9 +42,24 @@ Commit the generated file under `.agents/lessons/records/` to share it with your
 
 To correct a lesson, use the CLI's `search --json` to find its full ID. Add the revised lesson with `--supersedes <ID>`. The old entry stays in Git and drops out of search.
 
+## Configure prompt search
+
+Create `~/.config/repo-lessons/config.json` to customize both clients:
+
+```json
+{
+  "minSimilarity": 0.25,
+  "limit": 3
+}
+```
+
+- `minSimilarity` defaults to `0.12` and accepts numbers from `0` to `1`. Raise it to get stricter matches and lower it to broaden the results.
+- `limit` defaults to `5` and accepts integers from `1` to `100`. It caps the number of lessons selected. Each client may also limit how much hook output it includes.
+- Omitted settings use their defaults. A malformed config falls back to both defaults. The hook reads the file on every prompt. Set `REPO_LESSONS_CONFIG` to an absolute path if you want to use a different file.
+
 ## How it works
 
-On each prompt, the plugin finds the root of the current Git checkout and searches its lesson records. It uses word and character similarity to select up to five results, then passes their text and source paths to the client as extra context.
+On each prompt, the plugin finds the root of the current Git checkout and searches its lesson records. It uses word and character similarity to select up to five results by default, then passes their text and source paths to the client as extra context.
 
 Search runs locally without a search service, embedding API, or vec1 setup. The selected excerpts become part of the agent's context and can be included in requests to your configured model provider.
 

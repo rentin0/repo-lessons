@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { readPromptSettings } from "./prompt-settings.ts";
 import {
 	activeLessons,
 	addLesson,
@@ -121,7 +122,11 @@ async function runPromptHook() {
 	if (git.status !== 0 || !git.stdout.trim()) return {};
 
 	const { searchPromptVectors } = await import("./vector-search.ts");
-	const rows = searchPromptVectors(git.stdout.trim(), input.prompt.slice(0, 12000), 5);
+	const rows = searchPromptVectors(
+		git.stdout.trim(),
+		input.prompt.slice(0, 12000),
+		readPromptSettings(),
+	);
 	if (!rows.length) return {};
 	const references = rows.map(
 		({ date, path, rule }) =>

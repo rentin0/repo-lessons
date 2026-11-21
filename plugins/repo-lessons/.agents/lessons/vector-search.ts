@@ -9,11 +9,12 @@ import {
 	textFeatures,
 	vectorBytes,
 } from "./features.ts";
+import { defaultPromptSettings } from "./prompt-settings.ts";
 import { indexPath } from "./search.ts";
 import { activeLessons, readLessons, type Lesson } from "./store.ts";
 import { loadVec1, vec1Path, vec1Revision } from "./vec1.ts";
 
-const maximumDistance = 0.88;
+const maximumDistance = 1 - defaultPromptSettings.minSimilarity;
 
 function lessonFeatures(lessons: Lesson[]) {
 	return lessons.map((lesson) =>
@@ -25,12 +26,13 @@ function lessonFeatures(lessons: Lesson[]) {
 export function searchPromptVectors(
 	root: string,
 	query: string,
-	limit: number,
+	{ minSimilarity, limit }: typeof defaultPromptSettings,
 ) {
 	const lessons = activeLessons(readLessons(root));
 	const features = lessonFeatures(lessons);
 	const weights = corpusWeights(features);
 	const queryVector = featureVector(textFeatures(query), weights);
+	if (!queryVector.some((value) => value !== 0)) return [];
 	return lessons
 		.map((lesson, index) => {
 			const vector = featureVector(features[index], weights);
@@ -40,7 +42,7 @@ export function searchPromptVectors(
 			);
 			return { ...lesson, similarity };
 		})
-		.filter((lesson) => 1 - lesson.similarity <= maximumDistance)
+		.filter((lesson) => lesson.similarity >= minSimilarity)
 		.sort(
 			(left, right) =>
 				right.similarity - left.similarity ||
